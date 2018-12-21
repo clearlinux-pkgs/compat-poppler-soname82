@@ -6,7 +6,7 @@
 #
 Name     : compat-poppler-soname82
 Version  : 0.71.0
-Release  : 28
+Release  : 29
 URL      : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz
 Source0  : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz
 Source99 : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz.sig
@@ -19,7 +19,6 @@ Requires: compat-poppler-soname82-lib = %{version}-%{release}
 Requires: compat-poppler-soname82-license = %{version}-%{release}
 Requires: compat-poppler-soname82-man = %{version}-%{release}
 BuildRequires : buildreq-cmake
-BuildRequires : buildreq-kde
 BuildRequires : curl-dev
 BuildRequires : freetype-dev
 BuildRequires : glibc-bin
@@ -37,7 +36,6 @@ BuildRequires : pkgconfig(gobject-introspection-1.0)
 BuildRequires : pkgconfig(gtk+-3.0)
 BuildRequires : pkgconfig(lcms2)
 BuildRequires : pkgconfig(nss)
-BuildRequires : qtbase-extras
 BuildRequires : tiff-dev
 BuildRequires : zlib-dev
 Patch1: CVE-2018-19058.patch
@@ -131,7 +129,7 @@ export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1545341894
+export SOURCE_DATE_EPOCH=1545409326
 mkdir -p clr-build
 pushd clr-build
 export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
@@ -139,7 +137,7 @@ export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-i
 export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 %cmake .. -DENABLE_XPDF_HEADERS=ON -DENABLE_UTILS=ON -DENABLE_LIBOPENJPEG=none
-make  %{?_smp_mflags} VERBOSE=1
+make  %{?_smp_mflags}
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
@@ -150,11 +148,11 @@ export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-math-errno -fno-semanti
 export CFLAGS="$CFLAGS -march=haswell -m64"
 export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
 %cmake .. -DENABLE_XPDF_HEADERS=ON -DENABLE_UTILS=ON -DENABLE_LIBOPENJPEG=none
-make  %{?_smp_mflags} VERBOSE=1
+make  %{?_smp_mflags}
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1545341894
+export SOURCE_DATE_EPOCH=1545409326
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-poppler-soname82
 cp COPYING %{buildroot}/usr/share/package-licenses/compat-poppler-soname82/COPYING
@@ -166,6 +164,10 @@ popd
 pushd clr-build
 %make_install
 popd
+## install_append content
+rm %{buildroot}/usr/lib64/*cpp*
+rm %{buildroot}/usr/lib64/*glib*
+## install_append end
 
 %files
 %defattr(-,root,root,-)
@@ -329,14 +331,6 @@ popd
 %exclude /usr/include/poppler/goo/gstrtod.h
 %exclude /usr/include/poppler/goo/gtypes.h
 %exclude /usr/include/poppler/poppler-config.h
-%exclude /usr/include/poppler/qt5/poppler-annotation.h
-%exclude /usr/include/poppler/qt5/poppler-export.h
-%exclude /usr/include/poppler/qt5/poppler-form.h
-%exclude /usr/include/poppler/qt5/poppler-link.h
-%exclude /usr/include/poppler/qt5/poppler-media.h
-%exclude /usr/include/poppler/qt5/poppler-optcontent.h
-%exclude /usr/include/poppler/qt5/poppler-page-transition.h
-%exclude /usr/include/poppler/qt5/poppler-qt5.h
 %exclude /usr/include/poppler/splash/Splash.h
 %exclude /usr/include/poppler/splash/SplashBitmap.h
 %exclude /usr/include/poppler/splash/SplashClip.h
@@ -359,16 +353,11 @@ popd
 %exclude /usr/include/poppler/splash/SplashXPathScanner.h
 %exclude /usr/lib64/haswell/libpoppler-cpp.so
 %exclude /usr/lib64/haswell/libpoppler-glib.so
-%exclude /usr/lib64/haswell/libpoppler-qt5.so
 %exclude /usr/lib64/haswell/libpoppler.so
-%exclude /usr/lib64/libpoppler-cpp.so
-%exclude /usr/lib64/libpoppler-glib.so
-%exclude /usr/lib64/libpoppler-qt5.so
 %exclude /usr/lib64/libpoppler.so
 %exclude /usr/lib64/pkgconfig/poppler-cairo.pc
 %exclude /usr/lib64/pkgconfig/poppler-cpp.pc
 %exclude /usr/lib64/pkgconfig/poppler-glib.pc
-%exclude /usr/lib64/pkgconfig/poppler-qt5.pc
 %exclude /usr/lib64/pkgconfig/poppler-splash.pc
 %exclude /usr/lib64/pkgconfig/poppler.pc
 
@@ -378,14 +367,6 @@ popd
 %exclude /usr/lib64/haswell/libpoppler-cpp.so.0.5.0
 %exclude /usr/lib64/haswell/libpoppler-glib.so.8
 %exclude /usr/lib64/haswell/libpoppler-glib.so.8.10.0
-%exclude /usr/lib64/haswell/libpoppler-qt5.so.1
-%exclude /usr/lib64/haswell/libpoppler-qt5.so.1.17.0
-%exclude /usr/lib64/libpoppler-cpp.so.0
-%exclude /usr/lib64/libpoppler-cpp.so.0.5.0
-%exclude /usr/lib64/libpoppler-glib.so.8
-%exclude /usr/lib64/libpoppler-glib.so.8.10.0
-%exclude /usr/lib64/libpoppler-qt5.so.1
-%exclude /usr/lib64/libpoppler-qt5.so.1.17.0
 /usr/lib64/haswell/libpoppler.so.82
 /usr/lib64/haswell/libpoppler.so.82.0.0
 /usr/lib64/libpoppler.so.82
