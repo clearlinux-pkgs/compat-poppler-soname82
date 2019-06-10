@@ -6,7 +6,7 @@
 #
 Name     : compat-poppler-soname82
 Version  : 0.71.0
-Release  : 30
+Release  : 31
 URL      : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz
 Source0  : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz
 Source99 : https://poppler.freedesktop.org/poppler-0.71.0.tar.xz.sig
@@ -41,6 +41,7 @@ BuildRequires : zlib-dev
 Patch1: CVE-2018-19058.patch
 Patch2: CVE-2018-19059.patch
 Patch3: CVE-2018-19060.patch
+Patch4: CVE-2019-12293.patch
 
 %description
 This is poppler, a PDF rendering library.
@@ -120,39 +121,39 @@ man components for the compat-poppler-soname82 package.
 %patch1 -p1
 %patch2 -p1
 %patch3 -p1
-pushd ..
-cp -a poppler-0.71.0 buildavx2
-popd
+%patch4 -p1
 
 %build
 export http_proxy=http://127.0.0.1:9/
 export https_proxy=http://127.0.0.1:9/
 export no_proxy=localhost,127.0.0.1,0.0.0.0
 export LANG=C
-export SOURCE_DATE_EPOCH=1555317112
+export SOURCE_DATE_EPOCH=1560208781
 mkdir -p clr-build
 pushd clr-build
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -mzero-caller-saved-regs=used "
 %cmake .. -DENABLE_XPDF_HEADERS=ON -DENABLE_UTILS=ON -DENABLE_LIBOPENJPEG=none
-make  %{?_smp_mflags}
+make  %{?_smp_mflags} VERBOSE=1
 popd
 mkdir -p clr-build-avx2
 pushd clr-build-avx2
-export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
-export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
-export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
-export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fcf-protection=full -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export GCC_IGNORE_WERROR=1
+export CFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export FCFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export FFLAGS="$CFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
+export CXXFLAGS="$CXXFLAGS -O3 -falign-functions=32 -fno-lto -fno-math-errno -fno-semantic-interposition -fno-trapping-math -fstack-protector-strong -march=haswell -mzero-caller-saved-regs=used "
 export CFLAGS="$CFLAGS -march=haswell -m64"
 export CXXFLAGS="$CXXFLAGS -march=haswell -m64"
 %cmake .. -DENABLE_XPDF_HEADERS=ON -DENABLE_UTILS=ON -DENABLE_LIBOPENJPEG=none
-make  %{?_smp_mflags}
+make  %{?_smp_mflags} VERBOSE=1
 popd
 
 %install
-export SOURCE_DATE_EPOCH=1555317112
+export SOURCE_DATE_EPOCH=1560208781
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/share/package-licenses/compat-poppler-soname82
 cp COPYING %{buildroot}/usr/share/package-licenses/compat-poppler-soname82/COPYING
